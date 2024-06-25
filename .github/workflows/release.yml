@@ -1,0 +1,44 @@
+name: Generate Nim Docsets
+
+on:
+  workflow_dispatch:
+    inputs:
+      nim-version:
+        description: "The version of nim to generate the documentation for, it can be a semver, a branch or commit hash"
+        required: false
+        default: "devel"
+
+permissions:
+  contents: write
+
+jobs:
+  build-nim-docsets:
+    name: Generate Nim ${{ inputs.nim-version }} Docsets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Install nim ${{inputs.nim-version}}"
+        uses: iffy/install-nim@v5
+        with:
+          version: ${{ inputs.nim-version }}
+
+      - name: "Generate docset"
+        uses: melMass/actions@nukit
+        id: generate
+        with:
+          script: |
+            http get https://github.com/technosophos/dashing/releases/download/0.4.0/dashing | save dashing
+            chmod +x ./dashing
+            nim e docset.nims --version
+            ls *docset.zip | get name first | {docset:$in} | to-github --output
+
+      - name: ✅ Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: Nim_${{ inputs.nim-version }}_docsets
+          name: "Nim ${{ inputs.ue-version }} Docsets"
+          body: "Generated docsets for Nim ${{ inputs.nim-version }}."
+          draft: false
+          prerelease: false
+          files: |
+            ${{steps.generate.outputs.docset}}
