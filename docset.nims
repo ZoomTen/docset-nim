@@ -10,16 +10,18 @@ var
 for i in 3 .. paramCount():
   let
     param = paramStr(i)
-  if existsDir(param):
+  if dirExists(param):
     path = param
   elif param == "--version":
     vflag = true
 
+let ext = (if ExeExt == "exe": ".exe" else: ExeExt)
+
 let
-  nim = path / "bin" / "nim" & ExeExt
+  nim = path / "bin" / "nim" & ext
   upload = path / "web" / "upload"
 
-if not existsFile(nim):
+if not fileExists(nim):
   echo "Needs to be a Nim root directory with bin/nim[.exe]"
   quit()
 
@@ -41,14 +43,14 @@ echo "Running for " & version & " at " & path
 if hash.len < 16:
   # No hash in nim -v output
   hash = "v" & version
-echo  "  commit " & hash
+echo "  commit " & hash
 
-if not existsDir(upload/version):
+if not dirExists(upload/version):
   rmDir(upload)
   withDir path:
     exec "./koch docs --git.commit=" & hash
 
-if not existsDir(upload/version):
+if not dirExists(upload/version):
   echo "No html directory generated"
   quit()
 
