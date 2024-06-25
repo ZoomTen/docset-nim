@@ -23,6 +23,7 @@ jobs:
           version: ${{ inputs.nim-version }}
 
       - uses: actions/setup-go@v5
+
       - name: "Generate docset"
         uses: melMass/actions@nukit
         id: generate
@@ -30,23 +31,23 @@ jobs:
           script: |
             go install github.com/technosophos/dashing@latest
             nim e docset.nims --version
-            nim --version | lines | first | parse -r '(\d+\.\d+\.\d+)' | first | rename version | to-github --output
-            ls *docset.zip | get name | first | path expand | {docset:$in} | to-github --output
 
-      - name: Cache working directory
-        uses: actions/cache@v3
-        with:
-          path: |
-            .
-          key: ${{ runner.os }}-${{ github.sha }}-pwd-cache
+            let version = (nim --version | lines | first | parse -r '(\d+\.\d+\.\d+)' | first | rename DOCSET_VERSION) 
+            print $version
+
+            $version | to-github
+
+            let docset = (ls *docset.zip | get name | first | path expand | {NIM_DOCSET:$in})
+            print $docset
+            $docset | to-github
 
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nim_${{ steps.generate.outputs.version }}_docsets
-          name: "Nim ${{ steps.generate.outputs.version }} Docsets"
-          body: "Generated docsets for Nim ${{ steps.generate.outputs.version }}."
+          tag_name: nim_${{ env.DOCSET_VERSION }}_docsets
+          name: "Nim ${{ env.DOCSET_VERSION }} Docsets"
+          body: "Generated docsets for Nim ${{ env.DOCSET_VERSION }}."
           draft: false
           prerelease: false
           files: |
-            ${{steps.generate.outputs.docset}}
+            ${{env.NIM_DOCSET}}
