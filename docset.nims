@@ -1,4 +1,5 @@
-from os import getTempDir, `/`, ExeExt, getCurrentCompilerExe, parentDir, commandLineParams
+from os import getTempDir, `/`, ExeExt, getCurrentCompilerExe, parentDir,
+    commandLineParams
 import strutils
 
 var

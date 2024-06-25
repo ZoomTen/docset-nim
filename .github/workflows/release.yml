@@ -22,22 +22,30 @@ jobs:
         with:
           version: ${{ inputs.nim-version }}
 
+      - uses: actions/setup-go@v5
       - name: "Generate docset"
         uses: melMass/actions@nukit
         id: generate
         with:
           script: |
-            http get https://github.com/technosophos/dashing/releases/download/0.4.0/dashing | save dashing
-            chmod +x ./dashing
+            go install github.com/technosophos/dashing@latest
             nim e docset.nims --version
-            ls *docset.zip | get name first | {docset:$in} | to-github --output
+            nim --version | lines | first | parse -r '(\d+\.\d+\.\d+)' | first | rename version | to-github --output
+            ls *docset.zip | get name | first | path expand | {docset:$in} | to-github --output
+
+      - name: Cache working directory
+        uses: actions/cache@v3
+        with:
+          path: |
+            .
+          key: ${{ runner.os }}-${{ github.sha }}-pwd-cache
 
       - name: ✅ Create release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: Nim_${{ inputs.nim-version }}_docsets
-          name: "Nim ${{ inputs.ue-version }} Docsets"
-          body: "Generated docsets for Nim ${{ inputs.nim-version }}."
+          tag_name: nim_${{ steps.generate.outputs.version }}_docsets
+          name: "Nim ${{ steps.generate.outputs.version }} Docsets"
+          body: "Generated docsets for Nim ${{ steps.generate.outputs.version }}."
           draft: false
           prerelease: false
           files: |
