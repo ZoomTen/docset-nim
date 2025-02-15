@@ -4,22 +4,12 @@
     "index": "overview.html",
     "selectors": {
         "div#content>h1":"Section",
-        "h1.title": [{
-           	"type":"Module",
-           	"regexp":"Module ",
-           	"replacement": ""
-        }],
-        "div#7>dl.item>dt>pre>a:first-of-type>span.Identifier":"Type",
-        "div#8>dl.item>dt>pre>a:first-of-type>span.Identifier":"Variable",
-        "div#9>dl.item>dt>pre>a:first-of-type>span.Identifier":"Value",
-        "div#10>dl.item>dt>pre>a:first-of-type>span.Identifier":"Constant",
-        "div#12>dl.item>dt>pre>a:first-of-type>span.Identifier":"Procedure",
-        "div#13>dl.item>dt>pre>a:first-of-type>span.Identifier":"Function",
-        "div#14>dl.item>dt>pre>a:first-of-type>span.Identifier":"Method",
-        "div#15>dl.item>dt>pre>a:first-of-type>span.Identifier":"Iterator",
-        "div#16>dl.item>dt>pre>a:first-of-type>span.Identifier":"Converter",
-        "div#17>dl.item>dt>pre>a:first-of-type>span.Identifier":"Macro",
-        "div#18>dl.item>dt>pre>a:first-of-type>span.Identifier":"Template"
+        "h1.title": "Module",
+        "div[id='7'] a:nth-child(1) span.Identifier":"Type",
+        "div[id='8'] a:nth-child(1) span.Identifier":"Variable",
+        "div[id='9'] a:nth-child(1) span.Identifier":"Value",
+        "div[id='10'] a:nth-child(1) span.Identifier":"Constant",
+        "ul#toc-list.simple.simple-toc li details ul.simple.simple-toc-section ul.simple.nested-toc-section li a.reference":"Procedure",
     },
     "ignore": [],
     "icon16x16": "icon.png",
